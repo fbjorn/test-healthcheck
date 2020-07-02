@@ -1,19 +1,28 @@
-import socket
+import asyncio
 import time
 
+import httpx
 from invoke import Exit, task
 
 
-def wait_for_backend(timeout=10):
-    for _ in range(timeout // 2):
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+async def check_backend():
+    async with httpx.AsyncClient() as client:
         try:
-            s.connect(("backend", 8080))
-            s.close()
+            resp = await client.get("http://backend:8080/status", timeout=1)
+        except Exception:
+            return False
+        else:
+            if resp.status_code == 200:
+                return True
+    return False
+
+
+def wait_for_backend(timeout=10):
+    for _ in range(timeout):
+        if asyncio.get_event_loop().run_until_complete(check_backend()):
             return
-        except socket.error:
-            pass
-        time.sleep(2)
+        else:
+            time.sleep(1)
 
 
 @task()
