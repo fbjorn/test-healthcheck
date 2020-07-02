@@ -51,7 +51,7 @@ cp .env.tmpl .env
 Modify it by your needs. All parameters should be self-explanatory.
 
 ## How to run
-Make sure to [configure](##Configuration) `.env` file.
+Make sure to [configure](#Configuration) `.env` file.
 There are 2 docker-compose configuration files. To run service in production:
 ```bash
 docker-compose up
