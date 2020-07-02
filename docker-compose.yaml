@@ -22,6 +22,7 @@ services:
     environment:
       DEBUG: 0
       RELOAD: 0
+      DATABASES: healthcheck
     ports:
       - 8080:8080
     depends_on:
