@@ -1,0 +1,4 @@
+bottle==0.12.18
+invoke==1.4.1
+psycopg2-binary==2.8.5
+sqlalchemy==1.3.16

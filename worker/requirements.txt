@@ -1,0 +1,4 @@
+asyncpg==0.20.1
+httpx==0.13.3
+invoke==1.4.1
+structlog==20.1.0

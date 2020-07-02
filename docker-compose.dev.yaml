@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  backend:
+    image: test-healthcheck_backend-dev
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./backend
+    container_name: healthcheck-backend-dev
+    environment:
+      DEBUG: 1
+      RELOAD: 1
+      DATABASES: healthcheck,healthcheck_test
+    volumes:
+      - ./backend/:/app
+  worker:
+    image: test-healthcheck_worker-dev
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./worker
+    container_name: healthcheck-worker-dev
+    volumes:
+      - ./worker/:/app/
+  db:
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=healthcheck,healthcheck_test
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root

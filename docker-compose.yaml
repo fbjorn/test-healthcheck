@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  db:
+    image: postgres
+    container_name: healthcheck-postgres
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=healthcheck
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    restart: unless-stopped
+    volumes:
+      - ./pg-init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - webnet
+  backend:
+    build:
+      dockerfile: Dockerfile
+      context: ./backend
+    container_name: healthcheck-backend
+    command: ["invoke", "server"]
+    environment:
+      DEBUG: 0
+      RELOAD: 0
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - webnet
+  worker:
+    build:
+      dockerfile: Dockerfile
+      context: ./worker
+    container_name: healthcheck-worker
+    command: ["invoke", "worker"]
+    environment:
+      URLS: ${URLS}
+      INTERVAL: ${POLLING_INTERVAL}
+      TIMEOUT: ${REQUEST_TIMEOUT}
+      LOG_LEVEL: ${LOG_LEVEL}
+      WORKERS: ${WORKERS_COUNT}
+    depends_on:
+      - backend
+    networks:
+      - webnet
+
+networks:
+  webnet:
